@@ -64,6 +64,16 @@ const HTML = `<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JuiceSec — OWASP Vulnerability Lab</title>
+<meta name="description" content="Ten OWASP Top 10 vulnerabilities, exploitable in the browser, with an AI tutor that nudges instead of telling.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://juicesec.mrdinesh.workers.dev/">
+<meta property="og:title" content="JuiceSec — OWASP Vulnerability Lab">
+<meta property="og:description" content="Ten OWASP Top 10 vulnerabilities, exploitable in the browser, with an AI tutor that nudges instead of telling.">
+<meta property="og:image" content="https://mrdee.in/og/juicesec.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="JuiceSec — OWASP Vulnerability Lab">
+<meta name="twitter:description" content="Ten OWASP Top 10 vulnerabilities, exploitable in the browser, with an AI tutor that nudges instead of telling.">
+<meta name="twitter:image" content="https://mrdee.in/og/juicesec.png">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Inter:wght@400;500;600;700&display=swap');
 
