@@ -45,7 +45,7 @@ Single Cloudflare Worker (`worker.js`):
 
 ```
 GET  /        → full HTML/CSS/JS app (self-contained)
-POST /tutor   → Cloudflare Workers AI (llama-3.1-8b-instruct)
+POST /tutor   → Cloudflare Workers AI (llama-3.3-70b-instruct-fp8-fast, falls back to mistral-small-3.1-24b-instruct)
 ```
 
 - All challenge logic runs in browser JS — no real attack surface

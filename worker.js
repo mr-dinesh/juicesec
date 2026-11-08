@@ -1,3 +1,9 @@
+// First that works wins. Keep model-watch/watch.json in the monorepo in sync.
+const TUTOR_MODELS = [
+  "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+  "@cf/mistralai/mistral-small-3.1-24b-instruct",
+];
+
 export default {
   async fetch(request, env) {
     const cors = {
@@ -32,19 +38,29 @@ Rules:
         ? `Challenge solved: "${challenge}". Exploit used: ${attempt}. Explain the root cause, real-world impact, and fix.`
         : `Challenge: "${challenge}". User question or attempt: ${question || attempt || "(just started)"}. Give a Socratic hint without revealing the answer.`;
 
-      try {
-        const resp = await env.AI.run("@cf/meta/llama-3.1-8b-instruct", {
-          messages: [
-            { role: "system", content: system },
-            { role: "user", content: userMsg },
-          ],
-          temperature: 0.45,
-          max_tokens: 350,
-        });
-        return json({ ok: true, reply: resp?.response || "" }, 200, cors);
-      } catch (err) {
-        return json({ ok: false, error: err.message }, 502, cors);
+      // Workers AI retires models on a schedule (llama-3.1-8b-instruct went on
+      // 2026-05-30 and took the tutor down). Try each in turn so one retirement
+      // degrades to the next model instead of breaking the app.
+      let lastErr;
+      for (const model of TUTOR_MODELS) {
+        try {
+          const resp = await env.AI.run(model, {
+            messages: [
+              { role: "system", content: system },
+              { role: "user", content: userMsg },
+            ],
+            temperature: 0.45,
+            max_tokens: 350,
+          });
+          const reply = typeof resp?.response === "string" ? resp.response : "";
+          if (reply) return json({ ok: true, model, reply }, 200, cors);
+          lastErr = new Error(`${model}: empty reply`);
+        } catch (err) {
+          lastErr = err;
+          console.warn("juicesec: model failed —", model, err.message);
+        }
       }
+      return json({ ok: false, error: lastErr?.message || "No model available" }, 502, cors);
     }
 
     return new Response("Not found", { status: 404, headers: cors });
